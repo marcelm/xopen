@@ -34,16 +34,17 @@ jobs:
         - os: ubuntu-20.04
           python-version: 3.7
           with-isal: true
+        - os: windows-latest
+          python-version: 3.7
     steps:
-    - name: Install pigz
-      run: >
-          if [[ ${{ startsWith(matrix.os, 'macos') }} = true ]]; then
-            brew install pigz;
-          else
-            sudo apt-get install pigz;
-          fi
+    - name: Install pigz (MacOS)
+      if: runner.os == 'macOS'
+      run: brew install pigz
+    - name: Install pigz (Linux)
+      if: runner.os == 'Linux'
+      run: sudo apt-get install pigz
     - name: Install isal
-      if: matrix.with-isal && !startsWith(matrix.os, 'macos')
+      if: matrix.with-isal && runner.os == 'Linux'
       run: sudo apt-get install isal libisal-dev
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
